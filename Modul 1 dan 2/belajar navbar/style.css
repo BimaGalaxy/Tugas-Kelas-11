@@ -1,0 +1,51 @@
+* {
+    padding: 0;
+    margin: 0;
+    font-family: 'Quicksand', sans-serif;
+}
+
+header {
+    height: 70px;
+    background-color: bisque;
+}
+
+header h1 {
+    display: inline-block;
+    float: left;
+    padding: 15px 24px ;
+}
+header h1 a{
+    transition: 0.3s;
+    color: #cd5360;
+}
+header h1 a:hover {
+    color:#438496;
+}
+
+header ul {
+    float: right;
+}
+header ul li {
+    padding: 24px;
+    display: inline-block;
+}
+header ul li a{
+    transition: 0.3s;
+    color:  #cd5360;
+}
+header ul li a:hover{
+    color:#438496;
+}
+a {
+    text-decoration: none;
+}
+.navbar {
+    width: 90%;
+    margin: 0 auto;
+    color:  #438496;
+}
+.navbar::after {
+    content: '';
+    display: block;
+    clear: both;
+}
