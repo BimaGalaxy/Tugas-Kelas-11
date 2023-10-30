@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 19 Okt 2023 pada 17.03
+-- Waktu pembuatan: 30 Okt 2023 pada 15.55
 -- Versi server: 10.4.27-MariaDB
 -- Versi PHP: 7.4.33
 
@@ -43,15 +43,16 @@ CREATE TABLE `kendaraan` (
   `id_kendaraan` int(255) NOT NULL,
   `nama_kendaraan` varchar(255) NOT NULL,
   `plat_nomor` varchar(255) NOT NULL,
-  `merk_kendaraan` varchar(255) NOT NULL
+  `merk_kendaraan` varchar(255) NOT NULL,
+  `status_kendaraan` enum('Tersedia','Disewa') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data untuk tabel `kendaraan`
 --
 
-INSERT INTO `kendaraan` (`id_kendaraan`, `nama_kendaraan`, `plat_nomor`, `merk_kendaraan`) VALUES
-(5, 'JIMNY KATANA', 'W 1189 AG', 'SUZUKI');
+INSERT INTO `kendaraan` (`id_kendaraan`, `nama_kendaraan`, `plat_nomor`, `merk_kendaraan`, `status_kendaraan`) VALUES
+(5, 'JIMNY KATANA', 'W 1189 AG', 'SUZUKI', 'Tersedia');
 
 -- --------------------------------------------------------
 
