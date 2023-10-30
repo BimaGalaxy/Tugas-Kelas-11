@@ -21,39 +21,55 @@ router.get("/", (req, res) => {
   });
 });
 
-//post pemilik 
+//Post pemilik
 router.post("/", (req, res) => {
+  let kendaraanData = {
+      nama_kendaraan: req.body.nama_kendaraan,
+      plat_nomor: req.body.plat_nomor,
+      merk_kendaraan: req.body.merk_kendaraan,
+      status_kendaraan: 'Tersedia',
+  };
 
-    let data = {
-        nik_pemilik: req.body.nik_pemilik,
-        nama_pemilik: req.body.nama_pemilik,
-        password: req.body.password,
-        username: req.body.username,
-        id_kendaraan: req.body.id_kendaraan
-    };
-
-    // create sql query insert
-    let sql = "insert into pemilik set ?";
+  // create SQL query insert for kendaraan
+  let kendaraanSQL = "INSERT INTO kendaraan SET ?";
   
-    // run query
-    db.query(sql, data, (error, result) => {
-      let response = null;
+  // run query for kendaraan
+  db.query(kendaraanSQL, kendaraanData, (error, kendaraanResult) => {
       if (error) {
-        response = {
-          message: error.message,
-        };
+          res.json({
+              message: error.message,
+          });
       } else {
-        response = {
-          message: result.affectedRows + " data inserted",
-          nik_pemilik: data.nik_pemilik,
-          nama_pemilik: data.nama_pemilik,
-          password: data.password,
-          username: data.username,
-          id_kendaraan: data.id_kendaraan,
-        };
+          // Mendapatkan id_kendaraan yang baru saja diinput
+          const id_kendaraan_baru = kendaraanResult.insertId;
+
+          let pemilikData = {
+              nik_pemilik: req.body.nik_pemilik,
+              nama_pemilik: req.body.nama_pemilik,
+              password: req.body.password,
+              username: req.body.username,
+              id_kendaraan: id_kendaraan_baru, // Menggunakan id_kendaraan yang baru saja diinput
+          };
+
+          // create SQL query insert for pemilik
+          let pemilikSQL = "INSERT INTO pemilik SET ?";
+
+          // run query for pemilik
+          db.query(pemilikSQL, pemilikData, (error, pemilikResult) => {
+              if (error) {
+                  res.json({
+                      message: error.message,
+                  });
+              } else {
+                  res.json({
+                      message: "Pemilik and kendaraan data inserted",
+                      pemilik: pemilikData,
+                      kendaraan: kendaraanData,
+                  });
+              }
+          });
       }
-      res.json(response); // send response
-    });
+  });
 });
 
 // Update pemilik
@@ -92,30 +108,63 @@ router.put("/", (req, res) => {
 });
 
 //Delete pemilik
-router.delete("/:nik_pemilik", (req,res) => {
-    // prepare data
-    let data = {
-        nik_pemilik: req.params.nik_pemilik
-    }
+router.delete("/:nik_pemilik", (req, res) => {
+  const nik_pemilik = req.params.nik_pemilik;
 
-    // create query sql delete
-    let sql = "delete from pemilik where ?"
+  // Buat query SQL untuk menghapus kendaraan milik pemilik
+  const deleteKendaraanSQL = "DELETE FROM kendaraan WHERE id_kendaraan = (SELECT id_kendaraan FROM pemilik WHERE nik_pemilik = ?)";
 
-    // run query
-    db.query(sql, data, (error, result) => {
-        let response = null
-        if (error) {
-            response = {
-                message: error.message
-            }
-        } else {
-            response = {
-                message: result.affectedRows + " data deleted"
-            }
-        }
-        res.json(response) // send response
-    })
-})
+  // Buat query SQL untuk menghapus pemilik
+  const deletePemilikSQL = "DELETE FROM pemilik WHERE nik_pemilik = ?";
+
+  // Jalankan query SQL untuk menghapus kendaraan
+  db.query(deleteKendaraanSQL, nik_pemilik, (error, kendaraanResult) => {
+      if (error) {
+          res.json({
+              message: error.message
+          });
+      } else {
+          // Jalankan query SQL untuk menghapus pemilik setelah kendaraan terhapus
+          db.query(deletePemilikSQL, nik_pemilik, (error, pemilikResult) => {
+              if (error) {
+                  res.json({
+                      message: error.message
+                  });
+              } else {
+                  res.json({
+                      message: "Data pemilik dan kendaraannya dihapus"
+                  });
+              }
+          });
+      }
+  });
+});
+
+
+// router.delete("/:nik_pemilik", (req,res) => {
+//     // prepare data
+//     let data = {
+//         nik_pemilik: req.params.nik_pemilik
+//     }
+
+//     // create query sql delete
+//     let sql = "delete from pemilik where ?"
+
+//     // run query
+//     db.query(sql, data, (error, result) => {
+//         let response = null
+//         if (error) {
+//             response = {
+//                 message: error.message
+//             }
+//         } else {
+//             response = {
+//                 message: result.affectedRows + " data deleted"
+//             }
+//         }
+//         res.json(response) // send response
+//     })
+// })
 
 // //post kendaraan 
 // router.post("/", (req, res) => {
